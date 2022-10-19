@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Question = require('./questionSchema')
 
 const answerSchema = new mongoose.Schema({
     title: {
@@ -17,13 +18,12 @@ const answerSchema = new mongoose.Schema({
     },
 
     questionId: {
-        type: Number
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Question'
     }
 
 },
     { timestamps: true }
 )
 
-module.exports = {
-    answerSchema
-}
+module.exports = mongoose.model('Answer', answerSchema)

@@ -16,19 +16,19 @@ const questionSchema = new mongoose.Schema({
         type: String,
     },
 
-    tags: {
-        type: Array,
+    tag: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag"
+    }],
 
-    },
+    answer:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Answer"
+    }]
 
-    answers: {
-        type: Array
-    }
 
 },
     { timestamps: true }
 )
 
-module.exports = {
-    questionSchema
-}
+module.exports = mongoose.model('Question', questionSchema)
