@@ -9,12 +9,13 @@ const {
     getAnswers,
     getAllQuestionFromTag
     } = require('../controllers/questionController')
-    
+
 const {isAuth} = require('../middlewares/isAuth')
 const {store} = require('../config/databaseConfig/sessionConfig')
 const questionModel = require('../model/questionSchema')
 const answerModel = require('../model/answerSchema')
 const tagModel = require('../model/tagSchema')
+const {authorization} = require('../middlewares/jwtAuth')
 
 questionRoutes.use(express.urlencoded({extended : true}))
 questionRoutes.use(express.json())
@@ -30,9 +31,9 @@ questionRoutes.use(session({
 // questionRoutes.get('/', isAuth, getAllQuestions)
 questionRoutes.get('/', getAllQuestions);
 questionRoutes.get('/post', getPostQuestion);
-questionRoutes.post('/post', postQuestion);
-questionRoutes.get('/:questionId', getAnswers);
-questionRoutes.get('/tags/:tagname', getAllQuestionFromTag);
+questionRoutes.post('/post',authorization, postQuestion);
+questionRoutes.get('/:questionId',authorization, getAnswers);
+questionRoutes.get('/tags/:tagname',authorization, getAllQuestionFromTag);
 
 module.exports = {
     questionRoutes

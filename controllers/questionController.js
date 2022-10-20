@@ -6,7 +6,8 @@ const POST_QUESTION_PATH = 'questionViews//postQuestion'
 const questionModel = require('../model/questionSchema');
 const tagModel = require('../model/tagSchema');
 const answerModel = require('../model/answerSchema');
-const userModel = require('../model/userSchema')
+const userModel = require('../model/userSchema');
+
 
 const getAllQuestions = (request, response) => {
     response.render(GET_QUESTION_PATH)
@@ -17,6 +18,12 @@ const getPostQuestion = (request, response) => {
 }
 
 const postQuestion = async (request, response) => {
+    const decode = request.jwt;
+    if(!decode){
+        response.send("Invalid User");
+        response.end();
+    }
+
      // # To add the questions - 
      const {title, username,description,tag, answer} = request.body;
 
@@ -60,18 +67,24 @@ const postQuestion = async (request, response) => {
 }
 
 const getAnswers = async (request, response) => {
+    const decode = request.jwt;
+    if(!decode){
+        response.send("Invalid User");
+        response.end();
+    }
     const questionId = request.params.questionId;
     const answerList = await answerModel.find({questionId:questionId});
     response.send(answerList);
 }
 
 const getAllQuestionFromTag = async (request, response) => {
-    console.log("Inside get tags func");
+    const decode = request.jwt;
+    if(!decode){
+        response.send("Invalid User");
+        response.end();
+    }
     const tagName = request.params.tagname;
-    // console.log(typeof tagName)
-    // console.log(tagName);
     const tag = await tagModel.findOne({name:tagName});
-    console.log(tag);
     const questionArray = [];
     tag.question.forEach(async (questionId) => {
         const question = await questionModel.findById(questionId);

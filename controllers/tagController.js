@@ -6,6 +6,11 @@ const getTag = (request, response) => {
 }
 
 const getAllQuestionOfTag = async (request, response) => {
+    const decode = request.jwt;
+    if(!decode){
+        response.send("Invalid User");
+        response.end();
+    }
     const tagname = request.params.tagname;
     let tagInDb = await tagModel.findOne({name:tagname});
     let questionList = [];

@@ -15,7 +15,11 @@ const postAnswer = (request, response) => {
 }
 
 const postAnswerFromId = async (request, response) => {
-    console.log(request.params);
+    const decode = request.jwt;
+    if(!decode){
+        response.send("Invalid User");
+        response.end();
+    }
     const {title, username, description} = request.body;
     let newQuestionId = new ObjectID(request.params.questionId);
     const question = await questionModel.findById(newQuestionId);

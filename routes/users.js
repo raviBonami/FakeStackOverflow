@@ -1,12 +1,14 @@
 const express = require('express')
 const userRoutes = express.Router();
-const {getAllUsers, getUserQuestions} = require('../controllers/userController')
+const {getAllUsers, getUserQuestion, getUserAnswers} = require('../controllers/userController')
+const {authorization} = require('../middlewares/jwtAuth')
 
 userRoutes.use(express.urlencoded({extended : true}))
 userRoutes.use(express.json())
 
 userRoutes.get("/", getAllUsers);
-userRoutes.get("/:username",getUserQuestions)
+userRoutes.get("/questions/:username", authorization, getUserQuestion);
+userRoutes.get("/answers/:username",authorization, getUserAnswers);
 
 module.exports = {
     userRoutes

@@ -15,7 +15,7 @@ landingRoutes.use(express.urlencoded({extended : true}))
 
 landingRoutes.get('/',getHome)
 landingRoutes.get('/accessDenied',accessDenied )
-landingRoutes.post('/signup',userSchemaValidation, requestSchemaValidation, signupUser)
+// landingRoutes.post('/signup',userSchemaValidation, requestSchemaValidation, signupUser)
 
 module.exports = {
     landingRoutes
