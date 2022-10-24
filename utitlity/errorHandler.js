@@ -9,7 +9,4 @@ const errorHandler = (request, response,err,completeStr, errStr) => {
 }
 
 
-
-module.exports = {
-    errorHandler
-}
+export default errorHandler;

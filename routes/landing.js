@@ -1,22 +1,15 @@
-const {getHome} = require('../controllers/landingController')
-const {getLoginPage} = require('../controllers/loginController')
-const {getSignupPage} = require('../controllers/signupController')
-const {signupUser} = require('../controllers/userController')
-const {requestSchemaValidation, userSchemaValidation} = require('../utitlity/validateUser')
-const {accessDenied} = require('../controllers/accessDenied')
-const {store} = require('../config/databaseConfig/sessionConfig')
+// import getHome from '../controllers/landingController'; 
+import {accessDenied} from '../controllers/accessDenied.js';
+import {getHome} from "../controllers/landingController.js"
 
-const express = require('express')
+
+import express from 'express';
 const landingRoutes = express.Router();
 landingRoutes.use(express.json())
 
 landingRoutes.use(express.urlencoded({extended : true}))
 
-
 landingRoutes.get('/',getHome)
 landingRoutes.get('/accessDenied',accessDenied )
-// landingRoutes.post('/signup',userSchemaValidation, requestSchemaValidation, signupUser)
 
-module.exports = {
-    landingRoutes
-}
+export default landingRoutes;

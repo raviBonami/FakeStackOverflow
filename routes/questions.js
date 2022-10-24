@@ -1,21 +1,8 @@
-const express = require('express');
+import express from 'express';
 const questionRoutes = express.Router();
-const session = require('express-session')
-
-const {
-    getAllQuestions, 
-    getPostQuestion, 
-    postQuestion, 
-    getAnswers,
-    getAllQuestionFromTag
-    } = require('../controllers/questionController')
-
-const {isAuth} = require('../middlewares/isAuth')
-const {store} = require('../config/databaseConfig/sessionConfig')
-const questionModel = require('../model/questionSchema')
-const answerModel = require('../model/answerSchema')
-const tagModel = require('../model/tagSchema')
-const {authorization} = require('../middlewares/jwtAuth')
+import session from 'express-session';
+import { getQuestionFromId, postQuestion,getAllQuestionFromTag,getAllquestions } from '../controllers/questionController.js';
+import { authorization } from '../middlewares/jwtAuth.js';
 
 questionRoutes.use(express.urlencoded({extended : true}))
 questionRoutes.use(express.json())
@@ -24,20 +11,19 @@ questionRoutes.use(session({
     secret: "qwertyuiop",
     resave: false, 
     saveUninitialized: false,
-    store: store
+    // store: store
 }))
 
 
-// questionRoutes.get('/', isAuth, getAllQuestions)
-questionRoutes.get('/', getAllQuestions);
-questionRoutes.get('/post', getPostQuestion);
+questionRoutes.get('/', getAllquestions);
 questionRoutes.post('/post',authorization, postQuestion);
-questionRoutes.get('/:questionId',authorization, getAnswers);
-questionRoutes.get('/tags/:tagname',authorization, getAllQuestionFromTag);
+questionRoutes.get('/:questionId', getQuestionFromId);
+questionRoutes.get('/tags/:tagname', getAllQuestionFromTag);
 
-module.exports = {
-    questionRoutes
-}
+export default questionRoutes;
+
+
+
 
 
 

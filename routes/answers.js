@@ -1,18 +1,11 @@
-const { ObjectID } = require('bson');
-const express = require('express')
+import express from 'express';
+import { getAnswers,  postAnswerFromId } from '../controllers/answerController.js';
+import {authorization} from '../middlewares/jwtAuth.js';
 const answerRoutes = express.Router();
-const {getAnswers, postAnswer, postAnswerFromId} = require('../controllers/answerController')
-const questionModel = require("../model/questionSchema")
-const answerModel = require('../model/answerSchema')
-const {authorization} = require('../middlewares/jwtAuth')
 
-answerRoutes.use(express.urlencoded({extended : true}))
+answerRoutes.use(express.urlencoded({ extended: true }))
 
-answerRoutes.get('/',getAnswers)
-answerRoutes.get('/post',postAnswer)
+answerRoutes.get('/:questionId', getAnswers);
+answerRoutes.post("/:questionId", authorization, postAnswerFromId);
 
-answerRoutes.post("/:questionId",authorization, postAnswerFromId);
-
-module.exports = {
-    answerRoutes
-}
+export default answerRoutes;

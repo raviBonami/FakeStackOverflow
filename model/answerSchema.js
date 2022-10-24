@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Question = require('./questionSchema')
+import mongoose from 'mongoose';
 
 const answerSchema = new mongoose.Schema({
     title: {
@@ -26,4 +25,4 @@ const answerSchema = new mongoose.Schema({
     { timestamps: true }
 )
 
-module.exports = mongoose.model('Answer', answerSchema)
+export default mongoose.model('Answer', answerSchema);

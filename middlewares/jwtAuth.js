@@ -1,25 +1,23 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken')
 
-const authorization = (request, response, next) => {
+import jwt from 'jsonwebtoken';
+import { responseHandler } from '../utitlity/responseHandler.js';
+import { ERROR_MESSAGE, ACCESS_DENIED } from '../constants/constants.js';
+
+export const authorization = (request, response, next) => {
     if(request.headers['authorization']){
         try{
             let authorization = request.headers['authorization'].split(' ');
             if(authorization[0] !== 'Bearer'){
-                return response.status(401).send("Invalid Request");
+                return responseHandler(request, response, null, null, "Invalid Request",ACCESS_DENIED, 401);
             }else{
                 request.jwt = jwt.verify(authorization[1],process.env.ACCESS_TOKEN_SECRET);
                 return next();
             }
 
         }catch(error){
-            return response.status(403).send("Invalid Token")
+            return responseHandler(request, response, null, null, "Invalid Token", ACCESS_DENIED, 403);
         }
     }else{
-        return response.status(401).send("Invalid Request")
+        return responseHandler(request, response, null, null, "Invalid Request", ACCESS_DENIED, 401);
     }
-}
-
-module.exports = {
-    authorization
 }

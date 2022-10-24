@@ -1,13 +1,12 @@
 
-const express = require('express');
+import express from 'express';
 const loginRoute = express.Router();
 
-const session = require('express-session')
-// const MongoSession = require('connect-mongodb-session')(session)
-const {getLoginPage} = require('../controllers/loginController')
-const {signupUser,loginUser} = require('../controllers/userController')
-const {store} = require('../config/databaseConfig/sessionConfig')
-const {logoutUser} = require('../controllers/userController')
+import session from 'express-session';
+import {getLoginPage} from '../controllers/loginController.js';
+import {signupUser,loginUser} from '../controllers/userController.js';
+import store from '../config/databaseConfig/sessionConfig.js';
+import {logoutUser} from '../controllers/userController.js';
 
 
 loginRoute.use(express.urlencoded({extended : true}))
@@ -24,6 +23,6 @@ loginRoute.use(session({
 
 loginRoute.get('/',getLoginPage)
 loginRoute.post('/', loginUser)
-loginRoute.post('/user/logout',logoutUser)
+loginRoute.post('/user/logout', logoutUser)
 
-module.exports = loginRoute
+export default loginRoute;

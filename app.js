@@ -1,14 +1,15 @@
 
-
-const express = require('express')
-const db = require('./database/database')
-const {questionRoutes} = require('./routes/questions')
-const {landingRoutes} = require('./routes/landing')
-const {answerRoutes} = require('./routes/answers')
-const loginRoute = require('./routes/login')
-const {signupRoute} = require('./routes/signup')
-const {tagRoutes} = require('./routes/tags')
-const {userRoutes} = require('./routes/users')
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import './database/database.js';
+import questionRoutes from './routes/questions.js';
+import landingRoutes from './routes/landing.js';
+import answerRoutes from './routes/answers.js';
+import loginRoute from './routes/login.js';
+import signupRoute from './routes/signup.js';
+import tagRoutes from './routes/tags.js';
+import userRoutes from './routes/users.js';
 
 const app = express();
 app.set('view engine', 'ejs');

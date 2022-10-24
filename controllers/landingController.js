@@ -1,12 +1,15 @@
 
 
-const GET_HOME_PATH = 'homeView/home';
+const HOME_SUCCESS = "Inside Home path"
+import {responseHandler} from '../utitlity/responseHandler.js'
+import {ERROR_MESSAGE} from '../constants/constants.js'
 
-const getHome = (request, response) => {
-    response.render(GET_HOME_PATH)
+export const getHome = (request, response) => {
+    try{
+        responseHandler(request, response, HOME_SUCCESS, 200, null,null, null);
+    }catch(error){
+        responseHandler(request, response, null, null, error,ERROR_MESSAGE, 501);
+    }
+
 }
 
-
-module.exports = {
-    getHome
-}

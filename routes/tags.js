@@ -1,15 +1,13 @@
-const express = require('express');
+import express from 'express';
 const tagRoutes = express.Router();
 
 tagRoutes.use(express.urlencoded({extended : true}))
 tagRoutes.use(express.json())
-const {authorization} = require('../middlewares/jwtAuth')
+import {authorization} from '../middlewares/jwtAuth.js';
 
-const {getTag, getAllQuestionOfTag} = require('../controllers/tagController')
+import {getTag, getAllQuestionOfTag} from '../controllers/tagController.js';
 
 tagRoutes.get("/",getTag);
-tagRoutes.get("/:tagname", authorization, getAllQuestionOfTag);
+tagRoutes.get("/:tagname", getAllQuestionOfTag);
 
-module.exports = {
-    tagRoutes
-}
+export default tagRoutes

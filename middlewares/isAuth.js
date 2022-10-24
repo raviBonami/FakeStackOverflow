@@ -7,7 +7,6 @@ const isAuth = (request, response, next) => {
     }
 }
 
-module.exports = {
-    isAuth
-}
+export default isAuth;
+
 
