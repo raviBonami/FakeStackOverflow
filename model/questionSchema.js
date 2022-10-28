@@ -21,9 +21,19 @@ const questionSchema = new mongoose.Schema({
         ref: "Tag"
     }],
 
-    answer:[{
+    answer: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Answer"
+    }],
+
+    upvotes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    downvotes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }]
 
 

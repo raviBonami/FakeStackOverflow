@@ -7,13 +7,15 @@ import redirectHandler from '../utitlity/redirectHandler.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { responseHandler } from '../utitlity/responseHandler.js';
-import { ERROR_MESSAGE , ACCESS_DENIED, INVALID_USER} from '../constants/constants.js';
+import { ERROR_MESSAGE , ACCESS_DENIED, INVALID_USER, USER_NOT_FOUND} from '../constants/constants.js';
+import { requestSchemaValidation } from '../utitlity/validateUser.js';
 
 const SIGNUP_ERROR = 'User not added. Something went wrong';
 const LOGIN_ERROR = "Couldn't log you in. Something went wrong"
 
 export const signupUser = async (request, response) => {
     try {
+        requestSchemaValidation(request);
         const { username, email, password } = request.body
         let user = await userModel.findOne({ email })
         if (user) {
@@ -125,7 +127,7 @@ export const getUserAnswers = async (request, response) => {
     try{
         const decode = request.jwt;
         if (!decode) {
-            responseHandler(request, response, null, null, "Invalid User", ACCESS_DENIED, 403);
+            responseHandler(request, response, null, null, INVALID_USER, ACCESS_DENIED, 403);
         }
         const foundUser = await userModel.findOne({ email: decode.email });
         const answerIdList = foundUser.answers;
@@ -140,26 +142,37 @@ export const getUserAnswers = async (request, response) => {
     }catch(error){
         responseHandler(request, response, null, null, error, ERROR_MESSAGE, 501);
     }
-   
 }
 
+export const getUser = async (request, response) => {
+    try{
+        const {username} = request.params;
+        const user = await userModel.findOne({username:username});
+        if(user){
+            responseHandler(request, response, user, 200, null, null, null);
+        }else{
+            responseHandler(request, response, null, null, USER_NOT_FOUND, USER_NOT_FOUND, 404);
+        }
+    }catch(error){  
+        responseHandler(request, response, null, null, error, error, 501);
+    }
+    
+    
+}
 
-
-
-// plato
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBsYXRvQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDUiLCJpYXQiOjE2NjYyNTY3NTQsImV4cCI6MTY2NjI5Mjc1NH0.4R-PPDqCPfYxGqYIDw1YzaoxQh-Gr1A_qjAyPIHtX6k
-
-
-
-// user2
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDUiLCJpYXQiOjE2NjYyNTc1MDcsImV4cCI6MTY2NjI5MzUwN30.rNggI-N3ypl1mNyUvjCL6OPvKA0CUUUm2W34sDhkpWE
-
-// judas
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1ZGFzQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDUiLCJpYXQiOjE2NjYyNjYwODksImV4cCI6MTY2NjMwMjA4OX0.ExUEBcX6u4Cs36JQTx18gF_bivzuT0I4z3DQ-KR8JiY
-
-  // const user = request.params;
-    // console.log(user, "--------user---------")
-    // console.log(user.username);
-    // console.log(request.headers['authorization'].split(" ")[1],"---------")
-    // const token = request.headers['authorization'].split(" ")[1];
-    // const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+export const getUserQuestionsAndAnswers = async (request, response) => {
+    try{
+        const {username} = request.params;
+        const user = await userModel.findOne({username:username});
+        const questionAndAnswers = {questions:user.questions, answers:user.answers};
+        if(user){
+            responseHandler(request, response, questionAndAnswers, 200, null, null, null);
+        }else{
+            responseHandler(request, response, null, null, USER_NOT_FOUND, USER_NOT_FOUND, 404);
+        }
+    }catch(error){  
+        responseHandler(request, response, null, null, error, error, 501);
+    }
+    
+    
+}

@@ -1,17 +1,27 @@
-import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
+import express, { response } from 'express';
 const questionRoutes = express.Router();
 import session from 'express-session';
-import { getQuestionFromId, postQuestion,getAllQuestionFromTag,getAllquestions } from '../controllers/questionController.js';
+import store from '../config/databaseConfig/sessionConfig.js';
+import { 
+    getQuestionFromId, 
+    postQuestion, 
+    getAllQuestionFromTag, 
+    getAllquestions, 
+    upvoteQuestion, 
+    downvoteQuestion, 
+    } from '../controllers/questionController.js';
 import { authorization } from '../middlewares/jwtAuth.js';
 
 questionRoutes.use(express.urlencoded({extended : true}))
 questionRoutes.use(express.json())
 
 questionRoutes.use(session({
-    secret: "qwertyuiop",
+    secret: process.env.SESSION_SECRET,
     resave: false, 
     saveUninitialized: false,
-    // store: store
+    store: store
 }))
 
 
@@ -19,6 +29,8 @@ questionRoutes.get('/', getAllquestions);
 questionRoutes.post('/post',authorization, postQuestion);
 questionRoutes.get('/:questionId', getQuestionFromId);
 questionRoutes.get('/tags/:tagname', getAllQuestionFromTag);
+questionRoutes.post('/upvote/:questionId', authorization,upvoteQuestion);
+questionRoutes.post('/downvote/:questionId', authorization,downvoteQuestion);
 
 export default questionRoutes;
 

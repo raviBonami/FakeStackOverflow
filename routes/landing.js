@@ -1,4 +1,3 @@
-// import getHome from '../controllers/landingController'; 
 import {accessDenied} from '../controllers/accessDenied.js';
 import {getHome} from "../controllers/landingController.js"
 

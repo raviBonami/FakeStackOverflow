@@ -23,7 +23,11 @@ const userSchema = mongoose.Schema({
     answers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Answer'
-    }]
+    }],
+    points: {
+        type: Number,
+        default: 0
+    }
 })
 
 

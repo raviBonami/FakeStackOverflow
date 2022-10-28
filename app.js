@@ -26,6 +26,6 @@ app.use('/user',userRoutes)
 
 
 // Listening
-app.listen(8000, () => {
+app.listen(process.env.PORT_NUMBER, () => {
     console.log("Listening at 8000... fake stack overflow")
 })

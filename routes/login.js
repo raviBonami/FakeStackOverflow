@@ -1,5 +1,7 @@
 
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 const loginRoute = express.Router();
 
 import session from 'express-session';
@@ -12,10 +14,8 @@ import {logoutUser} from '../controllers/userController.js';
 loginRoute.use(express.urlencoded({extended : true}))
 loginRoute.use(express.json())
 
-const SECRET = "qwertyuiop";
-
 loginRoute.use(session({
-    secret: SECRET,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store

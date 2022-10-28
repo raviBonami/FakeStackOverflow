@@ -4,7 +4,7 @@ import tagModel from '../model/tagSchema.js';
 import answerModel from '../model/answerSchema.js';
 import userModel from '../model/userSchema.js';
 import { responseHandler } from '../utitlity/responseHandler.js'
-import { ERROR_MESSAGE, ACCESS_DENIED, INVALID_USER } from '../constants/constants.js';
+import { ERROR_MESSAGE, ACCESS_DENIED, INVALID_USER, CANNOT_POST_QUESTIONS } from '../constants/constants.js';
 
 export const getAllquestions = async (request, response) => {
     try {
@@ -30,10 +30,14 @@ export const postQuestion = async (request, response) => {
     try {
         const decode = request.jwt;
         if (!decode) {
-            responseHandler(request, response, null, null, INVALID_USER, ACCESS_DENIED, 403);
+            return responseHandler(request, response, null, null, INVALID_USER, ACCESS_DENIED, 403);
         }
-
         const { title, username, description, tag, answer } = request.body;
+        const user = await userModel.findOne({username: username});
+        if(user && user.points < 3){
+            return responseHandler(request, response, null, null, CANNOT_POST_QUESTIONS, CANNOT_POST_QUESTIONS, 405)
+        }
+        
         for (let i = 0; i < tag.length; i++) {
             const newTag = tagModel(tag[i]);
             let findTag = await tagModel.findOne({ name: newTag.name })
@@ -55,7 +59,7 @@ export const postQuestion = async (request, response) => {
         const questionToBeAdded = new questionModel({ title, username, description, tag: newTagIdArr, answer });
         await questionToBeAdded.save();
 
-        const user = await userModel.updateOne({ username: username }, { $addToSet: { questions: questionToBeAdded } });
+        await userModel.updateOne({ username: username }, { $addToSet: { questions: questionToBeAdded } });
         for (let i = 0; i < newTagIdArr.length; i++) {
             const tag = await tagModel.findById(newTagIdArr[i]);
             tag.question.push(questionToBeAdded._id);
@@ -64,6 +68,7 @@ export const postQuestion = async (request, response) => {
         }
         responseHandler(request, response, request.body, 200, null, null, null);
     } catch (error) {
+        console.log(error);
         responseHandler(request, response, null, null, error, ERROR_MESSAGE, 501);
     }
 
@@ -84,7 +89,7 @@ export const getAllQuestionFromTag = async (request, response) => {
     try {
         const decode = request.jwt;
         if (!decode) {
-            responseHandler(request, response, null, null, INVALID_USER,ACCESS_DENIED,403);
+            return responseHandler(request, response, null, null, INVALID_USER,ACCESS_DENIED,403);
         }
         const tagName = request.params.tagname;
         const tag = await tagModel.findOne({ name: tagName });
@@ -101,4 +106,46 @@ export const getAllQuestionFromTag = async (request, response) => {
         responseHandler(request, response, null, null, error, ERROR_MESSAGE, 501);
     }
 
+}
+
+export const upvoteQuestion = async (request, response) => {
+    try{
+        const decode = request.jwt;
+        if (!decode) {
+            return responseHandler(request, response, null, null, INVALID_USER,ACCESS_DENIED,403);
+        }
+
+        const questionId = request.params.questionId;
+        const foundQuestion = await questionModel.findById(questionId);
+        if(foundQuestion){
+            const user = await userModel.findOne({email:decode.email});
+            await questionModel.updateOne({_id:questionId},{$addToSet:{ upvotes: user._id  }});
+            await userModel.updateOne({email:decode.email}, {$inc : {points: 1 }});
+            await userModel.updateOne({username : foundQuestion.username }, {$inc : {points: 2}});
+        }
+        responseHandler(request, response, foundQuestion, 200, null, null, null);
+    }catch(error){
+        responseHandler(request, response, null, null, error, ERROR_MESSAGE, 501);
+    }
+}
+
+export const downvoteQuestion = async (request, response) => {
+    try{
+        const decode = request.jwt;
+        if (!decode) {
+            return responseHandler(request, response, null, null, INVALID_USER,ACCESS_DENIED,403);
+        }
+
+        const questionId = request.params.questionId;
+        const foundQuestion = await questionModel.findById(questionId);
+        if(foundQuestion){
+            const user = await userModel.findOne({email:decode.email});
+            await questionModel.updateOne({_id:questionId},{$addToSet:{ downvotes: user._id }});
+            await userModel.updateOne({email:decode.email}, {$inc : {points: 1 }});
+            await userModel.updateOne({username : foundQuestion.username }, {$inc : {points: -0.5}});
+        }
+        responseHandler(request, response, foundQuestion, 200, null, null, null);
+    }catch(error){
+        responseHandler(request, response, null, null, error, ERROR_MESSAGE, 501);
+    }
 }
